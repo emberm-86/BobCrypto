@@ -24,17 +24,11 @@ public class CryptoDetailsMapperTest {
   @Test
   public void testMappingNoInput() throws IOException {
     Properties cryptoProps = Mockito.mock(Properties.class);
-
-    Mockito.when(cryptoProps.getProperty("endpoint.baseurl")).thenReturn(BASE_URL);
-    Mockito.when(cryptoProps.getProperty("input.location")).thenReturn(INPUT_LOCATION);
-    Mockito.when(cryptoProps.getProperty("default.currency")).thenReturn(DEFAULT_CURRENCY);
-
     RestClient restClient = Mockito.mock(RestClient.class);
-    CryptoDetailsMapper cryptoDetailsMapper = new CryptoDetailsMapper(restClient);
 
-    mockRestClientByCryptCurr(restClient, "BTC");
-    mockRestClientByCryptCurr(restClient, "ETH");
-    mockRestClientByCryptCurr(restClient, "XRP");
+    prepareDefaultTestCase(cryptoProps, restClient);
+
+    CryptoDetailsMapper cryptoDetailsMapper = new CryptoDetailsMapper(restClient);
 
     Map<String, List<OutputRow>> map = cryptoDetailsMapper.map(new String[]{}, cryptoProps);
 
@@ -45,6 +39,16 @@ public class CryptoDetailsMapperTest {
     assertEquals(new BigDecimal("26466.25"), defaultCurrencyRates.get(0).getPrice());
     assertEquals(new BigDecimal("1675.12"), defaultCurrencyRates.get(1).getPrice());
     assertEquals(new BigDecimal("0.5663"), defaultCurrencyRates.get(2).getPrice());
+  }
+
+  private static void prepareDefaultTestCase(Properties cryptoProps, RestClient restClient) throws IOException {
+    Mockito.when(cryptoProps.getProperty("endpoint.baseurl")).thenReturn(BASE_URL);
+    Mockito.when(cryptoProps.getProperty("input.location")).thenReturn(INPUT_LOCATION);
+    Mockito.when(cryptoProps.getProperty("default.currency")).thenReturn(DEFAULT_CURRENCY);
+
+    mockRestClientByCryptCurr(restClient, "BTC");
+    mockRestClientByCryptCurr(restClient, "ETH");
+    mockRestClientByCryptCurr(restClient, "XRP");
   }
 
   private static void mockRestClientByCryptCurr(RestClient restClient, String cryptCurr)
