@@ -2,6 +2,7 @@ package com.test.swissre;
 
 import com.test.swissre.domain.OutputRow;
 import com.test.swissre.service.OutputService;
+import com.test.swissre.service.RestClient;
 import com.test.swissre.util.CryptoDetailsMapper;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,7 +16,8 @@ public class Application {
 
   public static void main(String[] args) {
     OutputService outputService = new OutputService();
-    CryptoDetailsMapper mapper = new CryptoDetailsMapper();
+    RestClient restClient = new RestClient();
+    CryptoDetailsMapper mapper = new CryptoDetailsMapper(restClient);
 
     try (InputStream input = Application.class.getClassLoader().getResourceAsStream(APP_CONFIG)) {
       Properties props = new Properties();

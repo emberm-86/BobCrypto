@@ -10,11 +10,15 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class CryptoDetailsMapper {
+  RestClient restClient;
 
   public Map<String, List<OutputRow>> map(String[] args, Properties props) throws IOException {
     String endpointUrl = props.getProperty("endpoint.baseurl");
@@ -48,8 +52,8 @@ public class CryptoDetailsMapper {
 
   private OutputRow getPrice(String endpointUrl, String currency, PortfolioItem portfolioItem) {
     String cryptoCurrency = portfolioItem.getCryptoCurrency();
-    Response response = RestClient.call(endpointUrl, cryptoCurrency, currency);
-    BigDecimal price = response != null ? response.getPrice() : new BigDecimal("0.00");
+    Response response = restClient.call(endpointUrl, cryptoCurrency, currency);
+    BigDecimal price = Objects.nonNull(response) ? response.getPrice() : new BigDecimal("0.00");
     return new OutputRow(portfolioItem, price);
   }
 }

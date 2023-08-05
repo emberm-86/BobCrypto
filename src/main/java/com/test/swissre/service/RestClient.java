@@ -14,10 +14,7 @@ import java.util.Map;
 
 public class RestClient {
 
-  private RestClient() {
-  }
-
-  public static Response call(String baseUrl, String cryptoCurrency, String currency) {
+  public Response call(String baseUrl, String cryptoCurrency, String currency) {
     try {
       HttpURLConnection connection = openConnection(baseUrl, cryptoCurrency, currency);
 
@@ -52,7 +49,7 @@ public class RestClient {
     return null;
   }
 
-  public static HttpURLConnection openConnection(String baseUrl, String cryptoCurrency,
+  public HttpURLConnection openConnection(String baseUrl, String cryptoCurrency,
       String currency) throws IOException {
 
     Map<String, String> parameters = new HashMap<>();
