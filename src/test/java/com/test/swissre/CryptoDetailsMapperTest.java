@@ -2,7 +2,6 @@ package com.test.swissre;
 
 import static com.test.swissre.TestUtil.mockResponse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
 
 import com.test.swissre.domain.OutputRow;
 import com.test.swissre.service.RestClient;
@@ -36,7 +35,9 @@ public class CryptoDetailsMapperTest {
     Mockito.when(mockHttpURLConnection.getInputStream())
         .thenReturn(mockResponse("BTC", DEFAULT_CURRENCY));
 
-    Mockito.when(restClient.openConnection(anyString(), anyString(), anyString()))
+    Mockito.when(restClient.call(BASE_URL, "BTC", DEFAULT_CURRENCY))
+        .thenCallRealMethod();
+    Mockito.when(restClient.openConnection(BASE_URL, "BTC", DEFAULT_CURRENCY))
         .thenReturn(mockHttpURLConnection);
 
     Map<String, List<OutputRow>> map = cryptoDetailsMapper.map(new String[]{}, cryptoProps);
