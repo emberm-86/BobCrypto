@@ -7,6 +7,7 @@ import com.test.swissre.domain.OutputRow;
 import com.test.swissre.service.RestClient;
 import com.test.swissre.util.CryptoDetailsMapper;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,8 @@ public class CryptoDetailsMapperTest {
     Map<String, List<OutputRow>> map = cryptoDetailsMapper.map(new String[]{}, cryptoProps);
 
     assertEquals(1, map.size());
-    assertEquals(3, map.get(DEFAULT_CURRENCY).size());
+    List<OutputRow> defaultCurrencyRates = map.get(DEFAULT_CURRENCY);
+    assertEquals(3, defaultCurrencyRates.size());
+    assertEquals(new BigDecimal("26499.77"), defaultCurrencyRates.get(0).getPrice());
   }
 }
