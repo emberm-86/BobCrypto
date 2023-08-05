@@ -25,8 +25,7 @@ public class TestUtil {
     return null;
   }
 
-
-  public static byte[] convertIsToByteArr(InputStream is) throws Exception {
+  private static byte[] convertIsToByteArr(InputStream is) throws Exception {
     ByteArrayOutputStream buffer = new ByteArrayOutputStream();
     int nRead;
     byte[] data = new byte[4];

@@ -24,6 +24,7 @@ public class CryptoDetailsMapperTest {
   @Test
   public void testMappingNoInput() throws IOException {
     Properties cryptoProps = Mockito.mock(Properties.class);
+
     Mockito.when(cryptoProps.getProperty("endpoint.baseurl")).thenReturn(BASE_URL);
     Mockito.when(cryptoProps.getProperty("input.location")).thenReturn(INPUT_LOCATION);
     Mockito.when(cryptoProps.getProperty("default.currency")).thenReturn(DEFAULT_CURRENCY);
@@ -31,21 +32,33 @@ public class CryptoDetailsMapperTest {
     RestClient restClient = Mockito.mock(RestClient.class);
     CryptoDetailsMapper cryptoDetailsMapper = new CryptoDetailsMapper(restClient);
 
-    HttpURLConnection mockHttpURLConnection = Mockito.mock(HttpURLConnection.class);
-    Mockito.when(mockHttpURLConnection.getResponseCode()).thenReturn(200);
-    Mockito.when(mockHttpURLConnection.getInputStream())
-        .thenReturn(mockResponse("BTC", DEFAULT_CURRENCY));
-
-    Mockito.when(restClient.call(BASE_URL, "BTC", DEFAULT_CURRENCY))
-        .thenCallRealMethod();
-    Mockito.when(restClient.openConnection(BASE_URL, "BTC", DEFAULT_CURRENCY))
-        .thenReturn(mockHttpURLConnection);
+    mockRestClientByCryptCurr(restClient, "BTC");
+    mockRestClientByCryptCurr(restClient, "ETH");
+    mockRestClientByCryptCurr(restClient, "XRP");
 
     Map<String, List<OutputRow>> map = cryptoDetailsMapper.map(new String[]{}, cryptoProps);
 
     assertEquals(1, map.size());
     List<OutputRow> defaultCurrencyRates = map.get(DEFAULT_CURRENCY);
+
     assertEquals(3, defaultCurrencyRates.size());
-    assertEquals(new BigDecimal("26499.77"), defaultCurrencyRates.get(0).getPrice());
+    assertEquals(new BigDecimal("26466.25"), defaultCurrencyRates.get(0).getPrice());
+    assertEquals(new BigDecimal("1675.12"), defaultCurrencyRates.get(1).getPrice());
+    assertEquals(new BigDecimal("0.5663"), defaultCurrencyRates.get(2).getPrice());
+  }
+
+  private static void mockRestClientByCryptCurr(RestClient restClient, String cryptCurr)
+      throws IOException {
+    mockRestClientByCryptCurr(restClient, cryptCurr, DEFAULT_CURRENCY);
+  }
+
+  private static void mockRestClientByCryptCurr(RestClient restClient, String cryptCurr,
+      String currency) throws IOException {
+    HttpURLConnection mockConn = Mockito.mock(HttpURLConnection.class);
+
+    Mockito.when(mockConn.getResponseCode()).thenReturn(200);
+    Mockito.when(mockConn.getInputStream()).thenReturn(mockResponse(cryptCurr, currency));
+    Mockito.when(restClient.call(BASE_URL, cryptCurr, currency)).thenCallRealMethod();
+    Mockito.when(restClient.openConnection(BASE_URL, cryptCurr, currency)).thenReturn(mockConn);
   }
 }
