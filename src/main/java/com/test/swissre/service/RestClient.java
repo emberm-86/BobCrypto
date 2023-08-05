@@ -18,15 +18,8 @@ public class RestClient {
   }
 
   public static Response call(String baseUrl, String cryptoCurrency, String currency) {
-    URL targetURL;
-
     try {
-      Map<String, String> parameters = new HashMap<>();
-      parameters.put("fsym", cryptoCurrency);
-      parameters.put("tsyms", currency);
-
-      targetURL = new URL(baseUrl + "?" + getParamsString(parameters));
-      HttpURLConnection connection = (HttpURLConnection) targetURL.openConnection();
+      HttpURLConnection connection = openConnection(baseUrl, cryptoCurrency, currency);
 
       connection.setRequestMethod("GET");
       connection.setRequestProperty("Accept", "application/json");
@@ -57,5 +50,16 @@ public class RestClient {
       e.printStackTrace();
     }
     return null;
+  }
+
+  public static HttpURLConnection openConnection(String baseUrl, String cryptoCurrency,
+      String currency) throws IOException {
+
+    Map<String, String> parameters = new HashMap<>();
+    parameters.put("fsym", cryptoCurrency);
+    parameters.put("tsyms", currency);
+
+    URL targetURL = new URL(baseUrl + "?" + getParamsString(parameters));
+    return (HttpURLConnection) targetURL.openConnection();
   }
 }

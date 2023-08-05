@@ -10,20 +10,25 @@ public class OutputService {
 
   public void printHeader(String currency, int maxPriceStrLen, int maxQuantityStrLen) {
     String title = "Details of your portfolio in " + currency;
-    IntStream.range(0, title.length()).forEach(i -> System.out.print("-"));
-    System.out.println("\n" + title);
-    IntStream.range(0, title.length()).forEach(i -> System.out.print("-"));
-    System.out.println();
+    printLineWithSep("\n" + title, title.length());
+    printLineWithSep("", title.length());
 
-    int shiftQuantity = maxPriceStrLen + 5;
-    String shiftQuantityStr = "%-" + shiftQuantity + "s";
-
-    int shiftSum = maxQuantityStrLen + 9;
-    String shiftSumStr = "%-" + shiftSum + "s";
+    String shiftQuantityStr = getShiftedStr(maxPriceStrLen, 5);
+    String shiftSumStr = getShiftedStr(maxQuantityStrLen, 9);
 
     System.out.printf("%-16s " + shiftQuantityStr + " " + shiftSumStr + " %s", "CryptoCurrency",
         "Price", "Quantity", "Sum");
     System.out.println();
+  }
+
+  private static String getShiftedStr(int maxPriceStrLen, int extraShift) {
+    int shiftQuantity = maxPriceStrLen + extraShift;
+    return "%-" + shiftQuantity + "s";
+  }
+
+  private static void printLineWithSep(String text, int length) {
+    IntStream.range(0, length).forEach(i -> System.out.print("-"));
+    System.out.println(text);
   }
 
   public void print(String currency, List<OutputRow> outputRows) {
@@ -34,18 +39,14 @@ public class OutputService {
     outputRows.forEach(outputRow -> printOutputRow(outputRow, maxPriceStrLen, maxQuantityStrLen));
   }
 
-  private static void printOutputRow(OutputRow outputRow, int maxPriceStrLen,
-      int maxQuantityStrLen) {
+  private void printOutputRow(OutputRow outputRow, int maxPriceStrLen, int maxQuantityStrLen) {
     PortfolioItem portfolioItem = outputRow.getPortfolioItem();
     BigDecimal price = outputRow.getPrice();
     String cryptoCurrency = portfolioItem.getCryptoCurrency();
     BigDecimal quantity = new BigDecimal(String.valueOf(portfolioItem.getQuantity()));
 
-    int shiftQuantity = maxPriceStrLen + 5;
-    String shiftQuantityStr = "%-" + shiftQuantity + "s";
-
-    int shiftSum = maxQuantityStrLen + 9;
-    String shiftSumStr = "%-" + shiftSum + "s";
+    String shiftQuantityStr = getShiftedStr(maxPriceStrLen, 5);
+    String shiftSumStr = getShiftedStr(maxQuantityStrLen, 9);
 
     System.out.printf("%-16s " + shiftQuantityStr + " " + shiftSumStr +" %s", cryptoCurrency, price, quantity,
         price.multiply(quantity));
