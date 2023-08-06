@@ -28,6 +28,11 @@ public class OutputService {
     return "%-" + shiftQuantity + "s";
   }
 
+  private static String getShiftedStrSum(int maxPriceStrLen, int extraShift) {
+    int shiftQuantity = maxPriceStrLen + extraShift;
+    return "%" + shiftQuantity + "s";
+  }
+
   private static void printLineWithSep(String text, int length) {
     IntStream.range(0, length).forEach(i -> System.out.print("-"));
     System.out.println(text);
@@ -41,6 +46,7 @@ public class OutputService {
     List<OutputRow> outputRowByCurr = outputRows.get(currency);
     outputRowByCurr.forEach(outputRow ->
         printOutputRow(outputRow, maxPriceStrLen, maxQuantityStrLen));
+    printSum(outputRowByCurr, maxPriceStrLen, maxQuantityStrLen);
   }
 
   private void printOutputRow(OutputRow outputRow, int maxPriceStrLen, int maxQuantityStrLen) {
@@ -54,6 +60,20 @@ public class OutputService {
 
     System.out.printf("%-16s " + shiftQuantityStr + " " + shiftSumStr +" %s", cryptoCurrency, price, quantity,
         price.multiply(quantity));
+    System.out.println();
+  }
+
+  private void printSum(List<OutputRow> outputRows, int maxPriceStrLen, int maxQuantityStrLen) {
+    BigDecimal allSum = outputRows.stream()
+        .map(outputRow -> {
+          PortfolioItem portfolioItem = outputRow.getPortfolioItem();
+          BigDecimal quantity = new BigDecimal(String.valueOf(portfolioItem.getQuantity()));
+          return outputRow.getPrice().multiply(quantity);
+        }).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+    String shiftAllStr = getShiftedStrSum(maxQuantityStrLen + maxPriceStrLen, 44);
+
+    System.out.printf(shiftAllStr, allSum);
     System.out.println();
   }
 
