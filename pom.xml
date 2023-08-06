@@ -90,7 +90,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>org.swissre.assessment.Application</mainClass>
+							<mainClass>com.test.swissre.Application</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
