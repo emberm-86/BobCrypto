@@ -24,7 +24,8 @@ public class Application {
       props.load(input);
 
       Map<String, List<OutputRow>> currenciesWithCryptoDetails = mapper.map(args, props);
-      currenciesWithCryptoDetails.forEach(outputService::print);
+      currenciesWithCryptoDetails.keySet().forEach(currency ->
+          outputService.print(currency, currenciesWithCryptoDetails));
     } catch (IOException e) {
       e.printStackTrace();
     }

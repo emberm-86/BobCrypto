@@ -3,7 +3,9 @@ package com.test.swissre.service;
 import com.test.swissre.domain.OutputRow;
 import com.test.swissre.domain.PortfolioItem;
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 public class OutputService {
@@ -31,12 +33,14 @@ public class OutputService {
     System.out.println(text);
   }
 
-  public void print(String currency, List<OutputRow> outputRows) {
+  public void print(String currency, Map<String, List<OutputRow>> outputRows) {
     int maxPriceStrLen = maxPriceStrLen(outputRows);
     int maxQuantityStrLen = maxQuantityStrLen(outputRows);
 
     printHeader(currency, maxPriceStrLen, maxQuantityStrLen);
-    outputRows.forEach(outputRow -> printOutputRow(outputRow, maxPriceStrLen, maxQuantityStrLen));
+    List<OutputRow> outputRowByCurr = outputRows.get(currency);
+    outputRowByCurr.forEach(outputRow ->
+        printOutputRow(outputRow, maxPriceStrLen, maxQuantityStrLen));
   }
 
   private void printOutputRow(OutputRow outputRow, int maxPriceStrLen, int maxQuantityStrLen) {
@@ -53,16 +57,18 @@ public class OutputService {
     System.out.println();
   }
 
-  private int maxPriceStrLen(List<OutputRow> outputRows) {
-    return outputRows.stream()
+  private int maxPriceStrLen(Map<String, List<OutputRow>> outputRows) {
+    return outputRows.values().stream()
+        .flatMap(Collection::stream)
         .map(OutputRow::getPrice)
         .map(BigDecimal::toString)
         .map(String::length)
         .max(Integer::compareTo).orElse("Price".length());
   }
 
-  private int maxQuantityStrLen(List<OutputRow> outputRows) {
-    return outputRows.stream()
+  private int maxQuantityStrLen(Map<String, List<OutputRow>> outputRows) {
+    return outputRows.values().stream()
+        .flatMap(Collection::stream)
         .map(outputRow -> outputRow.getPortfolioItem().getQuantity())
         .map(String::valueOf)
         .map(String::length)
