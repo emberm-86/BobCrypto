@@ -41,6 +41,37 @@ public class CryptoDetailsMapperTest {
     assertEquals(new BigDecimal("0.5663"), defaultCurrencyRates.get(2).getPrice());
   }
 
+  @Test
+  public void testMappingOneElementInput() throws IOException {
+    Properties cryptoProps = Mockito.mock(Properties.class);
+    RestClient restClient = Mockito.mock(RestClient.class);
+
+    prepareDefaultTestCase(cryptoProps, restClient);
+
+    mockRestClientByCryptCurr(restClient, "BTC","JPY");
+    mockRestClientByCryptCurr(restClient, "ETH","JPY");
+    mockRestClientByCryptCurr(restClient, "XRP","JPY");
+
+    CryptoDetailsMapper cryptoDetailsMapper = new CryptoDetailsMapper(restClient);
+
+    Map<String, List<OutputRow>> map = cryptoDetailsMapper.map(new String[]{"JPY"}, cryptoProps);
+
+    assertEquals(2, map.size());
+    List<OutputRow> eurCurrencyRates = map.get(DEFAULT_CURRENCY);
+
+    assertEquals(3, eurCurrencyRates.size());
+    assertEquals(new BigDecimal("26466.25"), eurCurrencyRates.get(0).getPrice());
+    assertEquals(new BigDecimal("1675.12"), eurCurrencyRates.get(1).getPrice());
+    assertEquals(new BigDecimal("0.5663"), eurCurrencyRates.get(2).getPrice());
+
+    List<OutputRow> jpyCurrencyRates = map.get("JPY");
+
+    assertEquals(3, jpyCurrencyRates.size());
+    assertEquals(new BigDecimal("4131937.89"), jpyCurrencyRates.get(0).getPrice());
+    assertEquals(new BigDecimal("261054"), jpyCurrencyRates.get(1).getPrice());
+    assertEquals(new BigDecimal("90.18"), jpyCurrencyRates.get(2).getPrice());
+  }
+
   private static void prepareDefaultTestCase(Properties cryptoProps, RestClient restClient) throws IOException {
     Mockito.when(cryptoProps.getProperty("endpoint.baseurl")).thenReturn(BASE_URL);
     Mockito.when(cryptoProps.getProperty("input.location")).thenReturn(INPUT_LOCATION);
